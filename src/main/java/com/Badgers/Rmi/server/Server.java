@@ -6,7 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class Server {
-    private static final int port=55555;
+    private static final int port=1099;
     private static final String url="dealer";
 
     public Server() {

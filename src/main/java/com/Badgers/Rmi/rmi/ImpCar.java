@@ -10,7 +10,7 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
 
     @Override
     public void newCar() throws RemoteException {
-        System.out.println("Hadiiiii");
+        
     }
 
     @Override
