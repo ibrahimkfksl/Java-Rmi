@@ -14,9 +14,9 @@ public class Server {
             Registry reg= LocateRegistry.createRegistry(port);
             reg=LocateRegistry.getRegistry();
             reg.rebind(url,new ImpCar());
-            System.out.println("Server Ayakta");
+            System.out.println("Server Calisiyor...");
         }catch (Exception e){
-            System.out.println("Exception: "+e);
+            e.printStackTrace();
         }
     }
 
