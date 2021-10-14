@@ -25,7 +25,7 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
 
     @Override
     public void newCar(Car newCar) throws RemoteException {
-        String filepath = "./data/cars.txt";
+        String filepath = "./data/cars.dat";
         try {
             FileWriter fileWriter = new FileWriter(filepath, true);
 
@@ -49,7 +49,7 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
 
     @Override
     public void newReceipt(Recipent recipent) throws RemoteException {
-        String filepath = "./data/recipent.txt";
+        String filepath = "./data/recipent.dat";
         try {
             FileWriter fileWriter = new FileWriter(filepath, true);
 
@@ -93,7 +93,7 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
     }
 
     private void getAllCarInFile() {
-        String filepath = "./data/cars.txt";
+        String filepath = "./data/cars.dat";
         StringBuilder data = new StringBuilder();
         try {
             File carsFile = new File(filepath);
@@ -133,7 +133,7 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
     }
 
     private void getAllRecipentInFile() {
-        String filepath = "./data/recipent.txt";
+        String filepath = "./data/recipent.dat";
         StringBuilder data = new StringBuilder();
         try {
             File carsFile = new File(filepath);
