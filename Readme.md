@@ -2,9 +2,9 @@
 
 ## Rmi (Remote Method Invocation) nedir?
 
-** Remote Method Invocation yani RMI farklı sunucularda olan metodların başka bir sunucudan çağırılarak kullanılmasında kullanılmaktadır. Java Nesnelerinin kullanmak için farklı bir sunucuya/sanal makina’ya bağlanıtyorsa buna biz Dağıtık Programlama diyoruz. RMI, Dağıtık Programlama yapmamıza olanak sağlamaktadır. **
+**Remote Method Invocation yani RMI farklı sunucularda olan metodların başka bir sunucudan çağırılarak kullanılmasında kullanılmaktadır. Java Nesnelerinin kullanmak için farklı bir sunucuya/sanal makina’ya bağlanıtyorsa buna biz Dağıtık Programlama diyoruz. RMI, Dağıtık Programlama yapmamıza olanak sağlamaktadır.**
 
-** Bu proje temelinde bir Rmi Java projesidir. Projede amaç uzak bir server da bulunan servise, lokalimizde ki bir server ve client dan işlem yaptırmaktır. Bu şekilde dağıtık bir sistem hedeflenmektedir. Proje genelinde araç alım satım işlemlerini temel almaktadır. Bu işlemler kullanıcıya console üzerinden yaptırılır ve bu sayede uzak sunucuda işlem yaptırmak hedeflenir. **
+**Bu proje temelinde bir Rmi Java projesidir. Projede amaç uzak bir server da bulunan servise, lokalimizde ki bir server ve client dan işlem yaptırmaktır. Bu şekilde dağıtık bir sistem hedeflenmektedir. Proje genelinde araç alım satım işlemlerini temel almaktadır. Bu işlemler kullanıcıya console üzerinden yaptırılır ve bu sayede uzak sunucuda işlem yaptırmak hedeflenir.**
 
 
 ### Proje nasıl ayağa kaldırılır?
