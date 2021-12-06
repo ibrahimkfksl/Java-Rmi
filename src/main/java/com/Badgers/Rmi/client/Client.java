@@ -5,28 +5,42 @@ import com.Badgers.Rmi.entity.Car;
 import com.Badgers.Rmi.entity.Recipent;
 import com.Badgers.Rmi.rmi.ICar;
 
-import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 public class Client {
-    private static final int port = 1099;
-    private static final String url = "dealer";
+    private static ArrayList<ICar> serverList;
 
     public static void main(String[] args) {
         try {
-            ICar car = (ICar) Naming.lookup("rmi://127.0.0.1:" + port + "/" + url);
-            menu(car);
+            //ICar car = (ICar) Naming.lookup("rmi://127.0.0.1:" + port + "/" + url);
+            startClient();
+            menu();
 
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
     }
 
-    public static void menu(ICar car) {
+    public static void startClient() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+        String[] serverNameList = registry.list();
+        serverList = new ArrayList<>();
+        for (String serverName : serverNameList) {
+            ICar server = (ICar) registry.lookup(serverName);
+            serverList.add(server);
+        }
+        System.out.println(serverList.size());
+    }
+
+    public static void menu() {
 
         while (true) {
             Scanner sc = new Scanner(System.in);
@@ -42,22 +56,22 @@ public class Client {
             try {
                 switch (choose) {
                     case 1:
-                        newCar(car);
+                        newCar();
                         break;
                     case 2:
-                        newReceipt(car);
+                        newReceipt();
                         break;
                     case 3:
-                        findCarBySN(car);
+                        findCarBySN();
                         break;
                     case 4:
-                        findCarByBrand(car);
+                        findCarByBrand();
                         break;
                     case 5:
-                        findReceiptById(car);
+                        findReceiptById();
                         break;
                     case 6:
-                        findReceiptByCustomerName(car);
+                        findReceiptByCustomerName();
                         break;
                     case 0:
                         System.out.println("Uygulamadan Cikiliyor...");
@@ -76,7 +90,7 @@ public class Client {
     }
 
 
-    public static void newCar(ICar car) throws RemoteException {
+    public static void newCar() throws RemoteException {
 
         Scanner sc = new Scanner(System.in);
         Car newCar = new Car();
@@ -110,15 +124,18 @@ public class Client {
         System.out.println();
 
 
-        try {
-            car.newCar(newCar);
-            System.out.println("Araba Kayıt tamamlandı");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        serverList.forEach(server -> {
+            try {
+                server.newCar(newCar);
+            } catch (RemoteException e) {
+                System.out.println(e.getMessage());
+            }
+        });
+        System.out.println("Araba Kayıt tamamlandı");
+
     }
 
-    public static void newReceipt(ICar car) throws RemoteException {
+    public static void newReceipt() throws RemoteException {
         Scanner sc = new Scanner(System.in);
         Recipent newRecipent = new Recipent();
         System.out.println("----------------------------------------------------------------");
@@ -153,7 +170,13 @@ public class Client {
             String dateString = format.format(new Date());
             newRecipent.setDate(dateString);
 
-            car.newReceipt(newRecipent);
+            serverList.forEach(server -> {
+                try {
+                    server.newReceipt(newRecipent);
+                } catch (RemoteException e) {
+                    System.out.println(e.getMessage());
+                }
+            });
             System.out.println("Fatura Kayıt tamamlandı");
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -161,11 +184,11 @@ public class Client {
 
     }
 
-    public static void findCarBySN(ICar car) throws RemoteException {
+    public static void findCarBySN() throws RemoteException {
         Scanner sc = new Scanner(System.in);
         System.out.println("----------------------------------------------------------------");
         System.out.print("Arabanın seri numarasını giriniz :  ");
-        Car findedCar = car.findCarBySN(sc.nextInt());
+        Car findedCar = serverList.get(0).findCarBySN(sc.nextInt());
         sc.nextLine();
         if (findedCar == null) {
             System.out.println("Araba bulunamadı!!");
@@ -175,23 +198,23 @@ public class Client {
     }
 
 
-    public static void findCarByBrand(ICar car) throws RemoteException {
+    public static void findCarByBrand() throws RemoteException {
         Scanner sc = new Scanner(System.in);
         System.out.println("----------------------------------------------------------------");
         System.out.print("Arabanın markasını giriniz :  ");
-        List<Car> findedCar = car.findCarByBrand(sc.nextLine());
-        if(!findedCar.isEmpty()){
+        List<Car> findedCar = serverList.get(0).findCarByBrand(sc.nextLine());
+        if (!findedCar.isEmpty()) {
             System.out.println("Arama Sonucu:  \n");
             findedCar.stream().forEach(car1 -> System.out.println(car1));
         }
 
     }
 
-    public static void findReceiptById(ICar car) throws RemoteException {
+    public static void findReceiptById() throws RemoteException {
         Scanner sc = new Scanner(System.in);
         System.out.println("----------------------------------------------------------------");
         System.out.print("Faturanın id'sini giriniz :  ");
-        Recipent recipent = car.findReceiptById(sc.nextInt());
+        Recipent recipent = serverList.get(0).findReceiptById(sc.nextInt());
         sc.nextLine();
         if (recipent == null) {
             System.out.println("Fatura bulunamadı!!");
@@ -200,13 +223,12 @@ public class Client {
         }
     }
 
-    public static void findReceiptByCustomerName(ICar car) throws RemoteException {
+    public static void findReceiptByCustomerName() throws RemoteException {
         Scanner sc = new Scanner(System.in);
         System.out.println("----------------------------------------------------------------");
         System.out.print("Fatura Alıcısının adı giriniz :  ");
-        List<Recipent> recipent = car.findReceiptByCustomerName(sc.nextLine());
-
-        if(!recipent.isEmpty()){
+        List<Recipent> recipent = serverList.get(0).findReceiptByCustomerName(sc.nextLine());
+        if (!recipent.isEmpty()) {
             System.out.println("Arama Sonucu:  \n");
             recipent.stream().forEach(recipent1 -> System.out.println(recipent1));
         }

@@ -6,6 +6,7 @@ import com.Badgers.Rmi.entity.Recipent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -16,19 +17,23 @@ import java.util.stream.Collectors;
 public class ImpCar extends UnicastRemoteObject implements ICar {
     private List<Car> carList = new ArrayList<>();
     private List<Recipent> recipentList = new ArrayList<>();
-
-    public ImpCar() throws RemoteException {
+    private String serverName;
+    public ImpCar(String serverName) throws RemoteException {
         super();
+        this.serverName=serverName;
         this.getAllCarInFile();
         this.getAllRecipentInFile();
     }
 
     @Override
     public void newCar(Car newCar) throws RemoteException {
-        String filepath = "./data/cars.dat";
+        String filepath = this.serverName+"_cars.dat";
+        File f1 = new File(filepath);
         try {
-            FileWriter fileWriter = new FileWriter(filepath, true);
-
+            if(!f1.exists()) {
+                f1.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(f1.getName(),true);
             fileWriter.write("{\n");
             fileWriter.write("\"serialNumber\":\"" + newCar.getSerialNumber() + "\",\n");
             fileWriter.write("\"brand\":\"" + newCar.getBrand() + "\",\n");
@@ -49,9 +54,13 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
 
     @Override
     public void newReceipt(Recipent recipent) throws RemoteException {
-        String filepath = "./data/recipent.dat";
+        String filepath = this.serverName+"_recipent.dat";
+        File f1 = new File(filepath);
         try {
-            FileWriter fileWriter = new FileWriter(filepath, true);
+            if(!f1.exists()) {
+                f1.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(f1.getName(),true);
 
             fileWriter.write("{\n");
             fileWriter.write("\"id\":\"" + recipent.getId() + "\",\n");
@@ -93,10 +102,13 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
     }
 
     private void getAllCarInFile() {
-        String filepath = "./data/cars.dat";
+        String filepath = this.serverName+"_cars.dat";
         StringBuilder data = new StringBuilder();
         try {
             File carsFile = new File(filepath);
+            if(!carsFile.exists()) {
+                carsFile.createNewFile();
+            }
             Scanner myReader = new Scanner(carsFile);
             while (myReader.hasNextLine()) {
                 data.append(myReader.nextLine());
@@ -104,6 +116,10 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
             myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println(filepath + " bulunamadi");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(filepath + " olusturulamadi");
+
             e.printStackTrace();
         }
 
@@ -133,10 +149,13 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
     }
 
     private void getAllRecipentInFile() {
-        String filepath = "./data/recipent.dat";
+        String filepath = this.serverName+"_recipent.dat";
         StringBuilder data = new StringBuilder();
         try {
             File carsFile = new File(filepath);
+            if(!carsFile.exists()) {
+                carsFile.createNewFile();
+            }
             Scanner myReader = new Scanner(carsFile);
             while (myReader.hasNextLine()) {
                 data.append(myReader.nextLine());
@@ -144,6 +163,9 @@ public class ImpCar extends UnicastRemoteObject implements ICar {
             myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println(filepath + " bulunamadi");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(filepath + " olusturulamadi");
             e.printStackTrace();
         }
 

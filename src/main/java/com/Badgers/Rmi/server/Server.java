@@ -4,23 +4,37 @@ import com.Badgers.Rmi.rmi.ImpCar;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
+import java.util.Scanner;
 
 public class Server {
     private static final int port=1099;
-    private static final String url="dealer";
+    private String url="dealer";
 
-    public Server() {
+    public Server(String serverName) {
         try {
-            Registry reg= LocateRegistry.createRegistry(port);
-            reg=LocateRegistry.getRegistry();
-            reg.rebind(url,new ImpCar());
-            System.out.println("Server Calisiyor...");
+            if(!serverName.equals("")){
+                this.url=serverName;
+            }
+            Registry reg;
+            try{
+                reg= LocateRegistry.createRegistry(port);
+            }catch(ExportException e){
+                reg=LocateRegistry.getRegistry(port);
+
+            }
+            reg.rebind(url,new ImpCar(this.url));
+            System.out.println(url+"   Server Calisiyor...");
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
     public static void main(String[] args) {
-        new Server();
+        System.out.print("Server Name: ");
+        Scanner scanner = new Scanner(System.in);
+        String serverName = scanner.nextLine();
+
+        new Server(serverName);
     }
 }
